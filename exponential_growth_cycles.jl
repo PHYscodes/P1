@@ -84,7 +84,7 @@ function simulate_growth_cycles(rng::AbstractRNG, mutation_rate::Float64)
         # Mutation step
         # -----------------
         # Draw new mutants proportional to current population size
-        new_mutants = rand(rng, Poisson(mutation_rate * total_count))
+        new_mutants = rand(rng, Poisson(mutation_rate * POP_SIZE))
         if new_mutants > 0
             types = collect(keys(population))
             counts = [population[t] for t in types]
@@ -107,7 +107,7 @@ function simulate_growth_cycles(rng::AbstractRNG, mutation_rate::Float64)
 
                     # Create or reuse mutant type based on (fi, fe)
                     fi = rand(rng) * (1 - FC)
-                    fe = rand(rng)
+                    fe = 0.95 * rand(rng)
 
                     mutant_type = 0
                     for (existing_type, properties) in mutant_properties
@@ -179,7 +179,7 @@ function simulate_growth_cycles(rng::AbstractRNG, mutation_rate::Float64)
             for type_id in all_types
                 p_prev = get(start_of_cycle_frequencies, type_id, 0.0)
                 p_next = get(end_of_cycle_frequencies, type_id, 0.0)
-                push!(delta_p_values, p_next - p_prev)
+                push!(delta_p_values, p_prev - p_next)
             end
 
             # Prepare for next cycle
